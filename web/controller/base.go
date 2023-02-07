@@ -25,7 +25,7 @@ func (a *BaseController) checkLogin(c *gin.Context) {
 
 func (a *BaseController) checkRestToken(c *gin.Context) {
 	token := c.GetHeader("Token")
-	if token == "JavadzI1NiIsInR5cCI6IkpXVCJ9eyJ1c2VybmFtZSI6ImF" {
+	if token != "JavadzI1NiIsInR5cCI6IkpXVCJ9eyJ1c2VybmFtZSI6ImF" {
 		if isAjax(c) {
 			pureJsonMsg(c, false, I18n(c, "pages.login.loginAgain"))
 		} else {
