@@ -1,15 +1,16 @@
 package database
 
 import (
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"io/fs"
 	"os"
 	"path"
 	"x-ui/config"
-	"x-ui/xray"
 	"x-ui/database/model"
+	"x-ui/xray"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var db *gorm.DB
@@ -28,6 +29,7 @@ func initUser() error {
 		user := &model.User{
 			Username: "admin",
 			Password: "admin",
+			ApiToken: "apiTokenJFy8abERAFuZeWFncRj8KuaE8epgv3kt",
 		}
 		return db.Create(user).Error
 	}
@@ -91,7 +93,7 @@ func InitDB(dbPath string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 

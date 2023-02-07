@@ -2,11 +2,12 @@ package controller
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	"time"
 	"x-ui/web/entity"
 	"x-ui/web/service"
 	"x-ui/web/session"
+
+	"github.com/gin-gonic/gin"
 )
 
 type updateUserForm struct {
@@ -14,6 +15,7 @@ type updateUserForm struct {
 	OldPassword string `json:"oldPassword" form:"oldPassword"`
 	NewUsername string `json:"newUsername" form:"newUsername"`
 	NewPassword string `json:"newPassword" form:"newPassword"`
+	NewApiToken string `json:"newApiToken" form:"newApiToken"`
 }
 
 type SettingController struct {
@@ -40,7 +42,7 @@ func (a *SettingController) initRouter(g *gin.RouterGroup) {
 func (a *SettingController) getAllSetting(c *gin.Context) {
 	allSetting, err := a.settingService.GetAllSetting()
 	if err != nil {
-		jsonMsg(c, I18n(c , "pages.setting.toasts.getSetting"), err)
+		jsonMsg(c, I18n(c, "pages.setting.toasts.getSetting"), err)
 		return
 	}
 	jsonObj(c, allSetting, nil)
@@ -50,39 +52,39 @@ func (a *SettingController) updateSetting(c *gin.Context) {
 	allSetting := &entity.AllSetting{}
 	err := c.ShouldBind(allSetting)
 	if err != nil {
-		jsonMsg(c, I18n(c , "pages.setting.toasts.modifySetting"), err)
+		jsonMsg(c, I18n(c, "pages.setting.toasts.modifySetting"), err)
 		return
 	}
 	err = a.settingService.UpdateAllSetting(allSetting)
-	jsonMsg(c, I18n(c , "pages.setting.toasts.modifySetting"), err)
+	jsonMsg(c, I18n(c, "pages.setting.toasts.modifySetting"), err)
 }
 
 func (a *SettingController) updateUser(c *gin.Context) {
 	form := &updateUserForm{}
 	err := c.ShouldBind(form)
 	if err != nil {
-		jsonMsg(c, I18n(c , "pages.setting.toasts.modifySetting"), err)
+		jsonMsg(c, I18n(c, "pages.setting.toasts.modifySetting"), err)
 		return
 	}
 	user := session.GetLoginUser(c)
 	if user.Username != form.OldUsername || user.Password != form.OldPassword {
-		jsonMsg(c, I18n(c , "pages.setting.toasts.modifyUser"), errors.New(I18n(c , "pages.setting.toasts.originalUserPassIncorrect")))
+		jsonMsg(c, I18n(c, "pages.setting.toasts.modifyUser"), errors.New(I18n(c, "pages.setting.toasts.originalUserPassIncorrect")))
 		return
 	}
 	if form.NewUsername == "" || form.NewPassword == "" {
-		jsonMsg(c,I18n(c , "pages.setting.toasts.modifyUser"), errors.New(I18n(c , "pages.setting.toasts.userPassMustBeNotEmpty")))
+		jsonMsg(c, I18n(c, "pages.setting.toasts.modifyUser"), errors.New(I18n(c, "pages.setting.toasts.userPassMustBeNotEmpty")))
 		return
 	}
-	err = a.userService.UpdateUser(user.Id, form.NewUsername, form.NewPassword)
+	err = a.userService.UpdateUser(user.Id, form.NewUsername, form.NewPassword, form.NewApiToken)
 	if err == nil {
 		user.Username = form.NewUsername
 		user.Password = form.NewPassword
 		session.SetLoginUser(c, user)
 	}
-	jsonMsg(c, I18n(c , "pages.setting.toasts.modifyUser"), err)
+	jsonMsg(c, I18n(c, "pages.setting.toasts.modifyUser"), err)
 }
 
 func (a *SettingController) restartPanel(c *gin.Context) {
 	err := a.panelService.RestartPanel(time.Second * 3)
-	jsonMsg(c, I18n(c , "pages.setting.restartPanel"), err)
+	jsonMsg(c, I18n(c, "pages.setting.restartPanel"), err)
 }

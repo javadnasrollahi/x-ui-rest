@@ -176,7 +176,7 @@ func updateTgbotSetting(tgBotToken string, tgBotChatid int, tgBotRuntime string)
 	}
 }
 
-func updateSetting(port int, username string, password string) {
+func updateSetting(port int, username string, password, apitoken string) {
 	err := database.InitDB(config.GetDBPath())
 	if err != nil {
 		fmt.Println(err)
@@ -195,7 +195,7 @@ func updateSetting(port int, username string, password string) {
 	}
 	if username != "" || password != "" {
 		userService := service.UserService{}
-		err := userService.UpdateFirstUser(username, password)
+		err := userService.UpdateFirstUser(username, password, apitoken)
 		if err != nil {
 			fmt.Println("set username and password failed:", err)
 		} else {
@@ -223,6 +223,7 @@ func main() {
 	var port int
 	var username string
 	var password string
+	var apitoken string
 	var tgbottoken string
 	var tgbotchatid int
 	var enabletgbot bool
@@ -234,6 +235,7 @@ func main() {
 	settingCmd.IntVar(&port, "port", 0, "set panel port")
 	settingCmd.StringVar(&username, "username", "", "set login username")
 	settingCmd.StringVar(&password, "password", "", "set login password")
+	settingCmd.StringVar(&apitoken, "apitoken", "", "set login apitoken")
 	settingCmd.StringVar(&tgbottoken, "tgbottoken", "", "set telegrame bot token")
 	settingCmd.StringVar(&tgbotRuntime, "tgbotRuntime", "", "set telegrame bot cron time")
 	settingCmd.IntVar(&tgbotchatid, "tgbotchatid", 0, "set telegrame bot chat id")
@@ -282,7 +284,7 @@ func main() {
 		if reset {
 			resetSetting()
 		} else {
-			updateSetting(port, username, password)
+			updateSetting(port, username, password, apitoken)
 		}
 		if show {
 			showSetting(show)
